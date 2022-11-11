@@ -74,5 +74,16 @@ def logistic_gradient(X, y, alpha, n_iter):
 
 
 def calc_accuracy(y, yh):
-    acc = np.sum(yh == y) / len(y)
+    m_sample = len(y)
+    correct = 0
+    for i in range(m_sample):
+        if yh[i] == y[i]:
+            correct += 1
+    acc = correct / m_sample
     return acc
+
+
+def validate(X, theta, num):
+    yh = np.dot(X, theta.T)
+    score = np.array([num if y > 0 else 0 for y in yh])
+    return score
