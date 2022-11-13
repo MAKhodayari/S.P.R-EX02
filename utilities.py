@@ -33,10 +33,10 @@ def logistic_prediction(X, theta, threshold=0.5, norm=False):
         return h
     else:
         if threshold == 0.5:
-            yh = np.array([0 if label < threshold else 1 for label in h]).reshape(-1, 1)
+            yh = np.array([1 if label >= threshold else 0 for label in h]).reshape(-1, 1)
         else:
-            yh = np.array([1 if label > threshold else 0 for label in h]).reshape(-1, 1)
-    return yh
+            yh = np.array([1 if label >= threshold else 0 for label in h]).reshape(-1, 1)
+        return yh
 
 
 def calc_cross_entropy(X, y, theta):
@@ -81,9 +81,3 @@ def calc_accuracy(y, yh):
             correct += 1
     acc = correct / m_sample
     return acc
-
-
-def validate(X, theta, num):
-    yh = np.dot(X, theta.T)
-    score = np.array([num if y > 0 else 0 for y in yh])
-    return score
