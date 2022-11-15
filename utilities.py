@@ -82,7 +82,7 @@ def calc_accuracy(y, yh):
     return acc
 
 
-def convert(info):
+def convert(info, binary):
     m_sample = len(info) // 28
     data = []
     for i in range(m_sample):
@@ -90,13 +90,21 @@ def convert(info):
         int_digit = np.zeros((28, 28), int)
         for j in range(28):
             for k in range(28):
-                if str_digit[j][k] != ' ':
-                    int_digit[j][k] = 1
+                if binary:
+                    if str_digit[j][k] != ' ':
+                        int_digit[j][k] = 1
+                else:
+                    if str_digit[j][k] == ' ':
+                        int_digit[j][k] = 0
+                    elif str_digit[j][k] == '+':
+                        int_digit[j][k] = 1
+                    else:
+                        int_digit[j][k] = 2
         data.append(int_digit)
     return data
 
 
-def open_naive_bayes():
+def open_naive_bayes(binary):
     with open('./dataset/digitdata/trainingimages', 'r') as training_image:
         train_info = []
         for line in training_image.readlines():
@@ -113,8 +121,8 @@ def open_naive_bayes():
         test_label = []
         for line in testing_label.readlines():
             test_label.append(list(map(int, line[:-1]))[0])
-    train_data = convert(train_info)
-    test_data = convert(test_info)
+    train_data = convert(train_info, binary)
+    test_data = convert(test_info, binary)
     return np.array(train_data), np.array(train_label), np.array(test_data), np.array(test_label)
 
 
@@ -125,26 +133,37 @@ def class_probability(label):
     return class_prob
 
 
-def index_probability(data, label, s_value):
+def index_probability(data, label, s_value, binary):
     unique, count = np.unique(label, return_counts=True)
     m_sample = len(label)
     n_feature = 28 * 28
     c_class = len(unique)
-    index_prob = np.zeros((n_feature, c_class, 2))
+    if binary:
+        index_prob = np.zeros((n_feature, c_class, 2))
+    else:
+        index_prob = np.zeros((n_feature, c_class, 3))
     for m in range(m_sample):
         for i in range(28):
             for j in range(28):
-                if data[m][i][j] == 0:
-                    index_prob[28 * i + j][label[m]][0] += 1
-                elif data[m][i][j] == 1:
-                    index_prob[28 * i + j][label[m]][1] += 1
+                if binary:
+                    if data[m][i][j] == 0:
+                        index_prob[28 * i + j][label[m]][0] += 1
+                    elif data[m][i][j] == 1:
+                        index_prob[28 * i + j][label[m]][1] += 1
+                else:
+                    if data[m][i][j] == 0:
+                        index_prob[28 * i + j][label[m]][0] += 1
+                    elif data[m][i][j] == 1:
+                        index_prob[28 * i + j][label[m]][1] += 1
+                    else:
+                        index_prob[28 * i + j][label[m]][2] += 1
     for n in range(n_feature):
         for c in range(c_class):
             index_prob[n][c] = (index_prob[n][c] + s_value) / (count[c] + (n_feature * s_value))
     return index_prob
 
 
-def naive_bayes_prediction(data, c_prob, i_prob):
+def naive_bayes_prediction(data, c_prob, i_prob, binary):
     c_class = len(c_prob)
     m_sample = len(data)
     data_pred = np.zeros((m_sample, 1), int)
@@ -153,9 +172,17 @@ def naive_bayes_prediction(data, c_prob, i_prob):
         for j in range(28):
             for k in range(28):
                 for m in range(c_class):
-                    if d[j][k] == 0:
-                        pred_arr[m] *= i_prob[28 * j + k][m][0]
-                    elif d[j][k] == 1:
-                        pred_arr[m] *= i_prob[28 * j + k][m][1]
+                    if binary:
+                        if d[j][k] == 0:
+                            pred_arr[m] *= i_prob[28 * j + k][m][0]
+                        elif d[j][k] == 1:
+                            pred_arr[m] *= i_prob[28 * j + k][m][1]
+                    else:
+                        if d[j][k] == 0:
+                            pred_arr[m] *= i_prob[28 * j + k][m][0]
+                        elif d[j][k] == 1:
+                            pred_arr[m] *= i_prob[28 * j + k][m][1]
+                        else:
+                            pred_arr[m] *= i_prob[28 * j + k][m][2]
         data_pred[i][0] = np.argmax(pred_arr)
     return data_pred
