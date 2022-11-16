@@ -20,7 +20,30 @@ if __name__ == '__main__':
     binary_naive_bayes_acc = utl.calc_accuracy(binary_test_label, binary_data_pred)
     ternary_naive_bayes_acc = utl.calc_accuracy(ternary_test_label, ternary_data_pred)
 
+    binary_conf_mat, binary_score_mat = utl.confusion_score_matrix(binary_test_label, binary_data_pred)
+    ternary_conf_mat, ternary_score_mat = utl.confusion_score_matrix(ternary_test_label, ternary_data_pred)
+
     # Result
-    print('Naive Bayes Accuracy With F[i][j] = {0, 1}: ' + str(round(binary_naive_bayes_acc, 3)))
-    print('Naive Bayes Accuracy With F[i][j] = {0, 1, 2}: ' + str(round(ternary_naive_bayes_acc, 3)))
+    print('Binary Confusion Matrix:\n')
+    print(binary_conf_mat)
+
+    print()
+
+    print('Binary Score Matrix:\n')
+    print(binary_score_mat.round(2))
+
+    print('\n')
+
+    print('Ternary Confusion Matrix:\n')
+    print(ternary_conf_mat)
+
+    print()
+
+    print('Ternary Score Matrix:\n')
+    print(ternary_score_mat.round(2))
+
+    print('\n')
+
+    print('Naive Bayes Accuracy With F[i][j] = {0, 1}: ' + str(round(binary_naive_bayes_acc * 100, 2)))
+    print('Naive Bayes Accuracy With F[i][j] = {0, 1, 2}: ' + str(round(ternary_naive_bayes_acc * 100, 2)))
 

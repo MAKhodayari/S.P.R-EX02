@@ -135,9 +135,9 @@ def class_probability(label):
 
 def index_probability(data, label, s_value, binary):
     unique, count = np.unique(label, return_counts=True)
+    c_class = len(unique)
     m_sample = len(label)
     n_feature = 28 * 28
-    c_class = len(unique)
     if binary:
         index_prob = np.zeros((n_feature, c_class, 2))
     else:
@@ -186,3 +186,34 @@ def naive_bayes_prediction(data, c_prob, i_prob, binary):
                             pred_arr[m] *= i_prob[28 * j + k][m][2]
         data_pred[i][0] = np.argmax(pred_arr)
     return data_pred
+
+
+def calc_scores(conf_mat):
+    c_class = len(conf_mat)
+    tp, tn, fp, fn = np.zeros(c_class, int), np.zeros(c_class, int), np.zeros(c_class, int), np.zeros(c_class, int)
+    scores = np.zeros((c_class, 4))
+    for i in range(c_class):
+        tp[i] = conf_mat[i][i]
+        tn[i] = np.sum(np.delete(np.delete(conf_mat, i, 0), i, 1))
+        fp[i] = np.sum(np.delete(conf_mat[i, :], i))
+        fn[i] = np.sum(np.delete(conf_mat[:, i], i, 0))
+        scores[i][0] = (tp[i] + tn[i]) / (tp[i] + tn[i] + fp[i] + fn[i])
+        scores[i][1] = tp[i] / (tp[i] + fp[i])
+        scores[i][2] = tp[i] / (tp[i] + fn[i])
+        scores[i][3] = (2 * tp[i]) / ((2 * tp[i]) + fp[i] + fn[i])
+    return scores
+
+
+def confusion_score_matrix(label, pred):
+    unique = np.unique(label)
+    c_class = len(unique)
+    label_index, pred_index = [], []
+    conf_mat = np.zeros((c_class, c_class), int)
+    for i in range(c_class):
+        label_index.append(np.where(label == i)[0])
+        pred_index.append(np.where(pred == i)[0])
+    for i in range(c_class):
+        for j in range(c_class):
+            conf_mat[i][j] = len(np.intersect1d(pred_index[i], label_index[j]))
+    score_mat = calc_scores(conf_mat)
+    return conf_mat, score_mat
