@@ -46,4 +46,3 @@ if __name__ == '__main__':
 
     print('Naive Bayes Accuracy With F[i][j] = {0, 1}: ' + str(round(binary_naive_bayes_acc * 100, 2)))
     print('Naive Bayes Accuracy With F[i][j] = {0, 1, 2}: ' + str(round(ternary_naive_bayes_acc * 100, 2)))
-
