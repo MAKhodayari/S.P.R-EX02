@@ -47,10 +47,9 @@ def calc_cross_entropy(X, y, theta):
     return ce[0]
 
 
-def logistic_gradient(X, y, alpha, n_iter):
+def logistic_gradient(X, y, alpha, n_iter, eps):
     m_sample, n_feature = X.shape
     theta = np.random.rand(n_feature).reshape(-1, n_feature)
-    iter_list = [i for i in range(n_iter)]
     iter_cost = []
     for i in range(n_iter):
         predictions = logistic_prediction(X, theta)
@@ -58,16 +57,19 @@ def logistic_gradient(X, y, alpha, n_iter):
         for j in range(n_feature):
             change.append((np.dot(X.iloc[:, j], (predictions - y))) / m_sample)
             theta[0][j] = theta[0][j] - alpha * change[j]
-        cost = sum(change)
+        cost = abs(sum(change))
         iter_cost.append(cost)
-    iter_cost = iter_cost[50:]
-    iter_list = iter_list[50:]
+        if cost < eps:
+            break
+    iter_list = [num for num in range(len(iter_cost))]
+    iter_cost, iter_list = iter_cost[25:], iter_list[25:]
+    plt.figure(figsize=(8, 6))
     plt.plot(iter_list, iter_cost, color='red')
-    plt.scatter(iter_list[::250], iter_cost[::250], marker='.', color='black')
     plt.suptitle('Gradient Method')
     plt.title('Cost Per Iteration')
     plt.xlabel('Iteration')
     plt.ylabel('Cost')
+    plt.figtext(0.5, 0.01, f'Finished With Cost {iter_cost[i - 25][0].round(4)} In {i + 1} Iterations', ha='center')
     plt.show()
     return theta[0]
 

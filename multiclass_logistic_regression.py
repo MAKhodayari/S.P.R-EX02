@@ -31,9 +31,9 @@ if __name__ == '__main__':
     X1v3_train, X1v3_test, y1v3_train, y1v3_test = train_test_split(X1v3, y1v3, test_size=0.2)
     X2v3_train, X2v3_test, y2v3_train, y2v3_test = train_test_split(X2v3, y2v3, test_size=0.2)
 
-    theta1v2 = utl.logistic_gradient(X1v2_train, y1v2_train, 0.25, 5000)
-    theta1v3 = utl.logistic_gradient(X1v3_train, y1v3_train, 0.25, 5000)
-    theta2v3 = utl.logistic_gradient(X2v3_train, y2v3_train, 0.25, 5000)
+    theta1v2 = utl.logistic_gradient(X1v2_train, y1v2_train, 0.5, 100000, 10 ** -4)
+    theta1v3 = utl.logistic_gradient(X1v3_train, y1v3_train, 0.5, 100000, 10 ** -4)
+    theta2v3 = utl.logistic_gradient(X2v3_train, y2v3_train, 0.5, 100000, 10 ** -4)
 
     # 1 VS 2
     ce_train_1v2 = utl.calc_cross_entropy(X1v2_train, y1v2_train, theta1v2)
@@ -66,22 +66,22 @@ if __name__ == '__main__':
     test_acc_2v3 = utl.calc_accuracy(y2v3_test, yh_test_2v3)
 
     # One VS One Results
-    print('One VS One Info:\n')
+    print('One VS One Result:\n')
 
     print('1 VS 2:')
     print(f'Theta: {theta1v2.round(2)}')
     print(f'Train Cross Entropy: {ce_train_1v2.round(2)} | Test Cross Entropy: {ce_test_1v2.round(2)}')
-    print(f'Train Accuracy {round(train_acc_1v2, 2)} | Test Accuracy {round(test_acc_1v2, 2)}\n')
+    print(f'Train Accuracy {round(train_acc_1v2 * 100, 2)}% | Test Accuracy {round(test_acc_1v2 * 100, 2)}%\n')
 
     print('1 VS 3:')
     print(f'Theta: {theta1v3.round(2)}')
     print(f'Train Cross Entropy: {ce_train_1v3.round(2)} | Test Cross Entropy: {ce_test_1v3.round(2)}')
-    print(f'Train Accuracy {round(train_acc_1v3, 2)} | Test Accuracy {round(test_acc_1v3, 2)}\n')
+    print(f'Train Accuracy {round(train_acc_1v3 * 100, 2)}% | Test Accuracy {round(test_acc_1v3 * 100, 2)}%\n')
 
     print('2 VS 3:')
     print(f'Theta: {theta2v3.round(2)}')
     print(f'Train Cross Entropy: {ce_train_2v3.round(2)} | Test Cross Entropy: {ce_test_2v3.round(2)}')
-    print(f'Train Accuracy {round(train_acc_2v3, 2)} | Test Accuracy {round(test_acc_2v3, 2)}\n\n')
+    print(f'Train Accuracy {round(train_acc_2v3 * 100, 2)}% | Test Accuracy {round(test_acc_2v3 * 100, 2)}%\n\n')
 
     # One VS All
     XOvA = data.iloc[:, :-1]
@@ -97,9 +97,9 @@ if __name__ == '__main__':
     X2vA_train, X2vA_test, y2vA_train, y2vA_test = train_test_split(XOvA, y2vA, test_size=0.2)
     X3vA_train, X3vA_test, y3vA_train, y3vA_test = train_test_split(XOvA, y3vA, test_size=0.2)
 
-    theta1vA = utl.logistic_gradient(X1vA_train, y1vA_train, 0.25, 5000)
-    theta2vA = utl.logistic_gradient(X2vA_train, y2vA_train, 0.25, 5000)
-    theta3vA = utl.logistic_gradient(X3vA_train, y3vA_train, 0.25, 5000)
+    theta1vA = utl.logistic_gradient(X1vA_train, y1vA_train, 0.5, 100000, 10 ** -4)
+    theta2vA = utl.logistic_gradient(X2vA_train, y2vA_train, 0.5, 100000, 10 ** -4)
+    theta3vA = utl.logistic_gradient(X3vA_train, y3vA_train, 0.5, 100000, 10 ** -4)
 
     # 1 VS All
     ce_train_1vA = utl.calc_cross_entropy(X1vA_train, y1vA_train, theta1vA)
@@ -132,19 +132,22 @@ if __name__ == '__main__':
     test_acc_3vA_pred = utl.calc_accuracy(y3vA_test, yh_test_3vA_pred)
 
     # One VS All Results
-    print('One VS All Info:\n')
+    print('One VS All Result:\n')
 
     print('1 VS All:')
     print(f'Theta: {theta1vA.round(2)}')
     print(f'Train Cross Entropy: {ce_train_1vA.round(2)} | Test Cross Entropy: {ce_test_1vA.round(2)}')
-    print(f'Train Accuracy: {round(train_acc_1vA_pred, 2)} | Test Accuracy: {round(test_acc_1vA_pred, 2)}\n')
+    print(f'Train Accuracy: {round(train_acc_1vA_pred * 100, 2)}% |'
+          f'Test Accuracy: {round(test_acc_1vA_pred * 100, 2)}%\n')
 
     print('2 VS All:')
     print(f'Theta: {theta2vA.round(2)}')
     print(f'Train Cross Entropy: {ce_train_2vA.round(2)} | Test Cross Entropy: {ce_test_2vA.round(2)}')
-    print(f'Train Accuracy: {round(train_acc_2vA_pred, 2)} | Test Accuracy: {round(test_acc_2vA_pred, 2)}\n')
+    print(f'Train Accuracy: {round(train_acc_2vA_pred * 100, 2)}% |'
+          f'Test Accuracy: {round(test_acc_2vA_pred * 100, 2)}%\n')
 
     print('3 VS All:')
     print(f'Theta: {theta3vA.round(2)}')
     print(f'Train Cross Entropy: {ce_train_3vA.round(2)} | Test Cross Entropy: {ce_test_3vA.round(2)}')
-    print(f'Train Accuracy: {round(train_acc_3vA_pred, 2)} | Test Accuracy: {round(test_acc_3vA_pred, 2)}')
+    print(f'Train Accuracy: {round(train_acc_3vA_pred * 100, 2)}% |'
+          f'Test Accuracy: {round(test_acc_3vA_pred * 100, 2)}%')
