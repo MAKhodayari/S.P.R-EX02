@@ -15,7 +15,7 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
     # Train
-    class_theta = utl.softmax_gradient(X_train, y_train, 0.01, 100000, 10 ** -4)
+    class_theta, cross_entropy = utl.softmax_gradient(X_train, y_train, 0.01, 1000)
 
     # Test
     yh_train = utl.softmax_prediction(X_train, class_theta, True)
@@ -24,6 +24,9 @@ if __name__ == '__main__':
     acc_train = utl.calc_accuracy(np.array(y_train).reshape(-1, 1), yh_train)
     acc_test = utl.calc_accuracy(np.array(y_test).reshape(-1, 1), yh_test)
 
-    # Result
-    print('Softmax Regression Result:\n')
+    # Results
+    print('Softmax Regression Result:')
+    for c in range(len(np.unique(y))):
+        print(f'Theta For Class {c + 1}: {class_theta[:, c].round(2)}')
+    print(f'Cross Entropy: {cross_entropy}')
     print(f'Train Accuracy: {round(acc_train * 100, 2)} | Test Accuracy: {round(acc_test * 100, 2)}\n')
