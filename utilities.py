@@ -219,3 +219,54 @@ def confusion_score_matrix(label, pred):
             conf_mat[i][j] = len(np.intersect1d(pred_index[i], label_index[j]))
     score_mat = calc_scores(conf_mat)
     return conf_mat, score_mat
+
+
+def one_hot_encode(y):
+    m_sample = len(y)
+    classes = np.unique(y)
+    c_class = len(classes)
+    one_hot = np.zeros((m_sample, c_class), int)
+    for i in range(m_sample):
+        for j, c in enumerate(classes):
+            if y[i] == c:
+                one_hot[i][j] = 1
+    return one_hot
+
+
+def softmax_prediction(X, theta, norm=False):
+    z = np.dot(X, theta)
+    h = np.exp(z - np.max(z, axis=1, keepdims=True))
+    yh = h / np.sum(h, axis=1, keepdims=True)
+    if not norm:
+        return yh
+    else:
+        return np.argmax(yh, axis=1, keepdims=True) + 1
+
+
+def softmax_gradient(X, y, alpha, n_iter, eps):
+    m_sample, n_feature = X.shape
+    c_class = len(np.unique(y))
+    theta = np.random.rand(n_feature, c_class)
+    one_hot = one_hot_encode(np.array(y))
+    iter_cost = []
+    for i in range(n_iter):
+        pred = softmax_prediction(X, theta)
+        change = np.dot(X.T, (pred - one_hot))
+        theta = theta - alpha * np.array(change)
+        cost = 0
+        for c in range(c_class):
+            cost += np.sum(one_hot[:, c] * np.log10(pred[:, c]))
+        cost = -cost / m_sample
+        iter_cost.append(cost)
+        if cost < eps:
+            break
+    iter_list = [num for num in range(len(iter_cost))]
+    plt.figure(figsize=(8, 6))
+    plt.plot(iter_list, iter_cost, color='red')
+    plt.suptitle('Gradient Method')
+    plt.title('Cost Per Iteration')
+    plt.xlabel('Iteration')
+    plt.ylabel('Cost')
+    plt.figtext(0.5, 0.01, f'Finished With Cost {round(iter_cost[-1], 3)} In {i + 1} Iterations', ha='center')
+    plt.show()
+    return theta
