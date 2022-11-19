@@ -74,7 +74,7 @@ def logistic_gradient(X, y, alpha, n_iter):
     plt.ylabel('Cost')
     plt.figtext(0.5, 0.01, f'Finished With Cost {iter_cost[-1][0].round(5)} In {i + 1} Iterations', ha='center')
     plt.show()
-    return theta[0]
+    return theta[0], np.array(iter_cost)
 
 
 def calc_cross_entropy(X, y, theta):

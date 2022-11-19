@@ -1,4 +1,6 @@
 import numpy as np
+from matplotlib import pyplot as plt
+
 import utilities as utl
 from sklearn.model_selection import train_test_split
 
@@ -21,7 +23,7 @@ if __name__ == '__main__':
     X_train_3vA, X_test_3vA, y_train_3vA, y_test_3vA = train_test_split(X_OvA, y_3vA, test_size=0.2)
 
     # Train Phase Of 1 VS All
-    theta_1vA = utl.logistic_gradient(X_train_1vA, y_train_1vA, 0.5, 10000)
+    theta_1vA, cost_1vA = utl.logistic_gradient(X_train_1vA, y_train_1vA, 0.5, 10000)
 
     # Test Phase Of 1 VS All
     yh_train_1vA = utl.logistic_prediction(X_train_1vA, theta_1vA, 1 / 3, True)
@@ -40,7 +42,7 @@ if __name__ == '__main__':
     print(f'Train Accuracy: {round(train_acc_1vA * 100, 2)} | Test Accuracy: {round(test_acc_1vA * 100, 2)}\n')
 
     # Train Phase Of 2 VS All
-    theta_2vA = utl.logistic_gradient(X_train_2vA, y_train_2vA, 0.5, 10000)
+    theta_2vA, cost_2vA = utl.logistic_gradient(X_train_2vA, y_train_2vA, 0.5, 10000)
 
     # Test Phase Of 2 VS All
     yh_train_2vA = utl.logistic_prediction(X_train_2vA, theta_2vA, 1 / 3, True)
@@ -59,7 +61,7 @@ if __name__ == '__main__':
     print(f'Train Accuracy: {round(train_acc_2vA * 100, 2)} | Test Accuracy: {round(test_acc_2vA * 100, 2)}\n')
 
     # Train Phase Of 3 VS All
-    theta_3vA = utl.logistic_gradient(X_train_3vA, y_train_3vA, 0.5, 10000)
+    theta_3vA, cost_3vA = utl.logistic_gradient(X_train_3vA, y_train_3vA, 0.5, 10000)
 
     # Test Phase Of 2 VS All
     yh_train_3vA = utl.logistic_prediction(X_train_3vA, theta_3vA, 1 / 3, True)
@@ -76,3 +78,16 @@ if __name__ == '__main__':
     print(f'Theta: {theta_3vA.round(2)}')
     print(f'Train Cross Entropy: {train_ce_3vA.round(2)} | Test Cross Entropy: {test_ce_3vA.round(2)}')
     print(f'Train Accuracy: {round(train_acc_3vA * 100, 2)} | Test Accuracy: {round(test_acc_3vA * 100, 2)}\n')
+
+    # Plots
+    iter_list = [i for i in range(10000)]
+    plt.plot(iter_list, cost_1vA, label='1 VS 2 Cost')
+    plt.plot(iter_list, cost_2vA, label='1 VS 3 Cost')
+    plt.plot(iter_list, cost_3vA, label='2 VS 3 Cost')
+    plt.plot(iter_list, (cost_1vA + cost_2vA + cost_3vA) / 3, label='Average Cost')
+    plt.legend(loc="upper right")
+    plt.suptitle('Gradient Method')
+    plt.title('Cost Per Iteration')
+    plt.xlabel('Iteration')
+    plt.ylabel('Cost')
+    plt.show()
