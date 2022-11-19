@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -182,10 +184,12 @@ def class_probability(label):
     m_sample = len(label)
     _, count = np.unique(label, return_counts=True)
     class_prob = count / m_sample
+    for i in range(len(class_prob)):
+        class_prob[i] = - math.log(class_prob[i], 0.5)
     return class_prob
 
 
-def index_probability(data, label, binary):
+def index_probability(data, label, ls_val, binary):
     unique, count = np.unique(label, return_counts=True)
     c_class = len(unique)
     m_sample = len(label)
@@ -211,7 +215,12 @@ def index_probability(data, label, binary):
                         index_prob[28 * i + j][label[m]][2] += 1
     for n in range(n_feature):
         for c in range(c_class):
-            index_prob[n][c] = index_prob[n][c] / count[c]
+            if binary:
+                for v in range(2):
+                    index_prob[n][c][v] = (- math.log(index_prob[n][c][v] + ls_val, 0.5)) / (count[c] + (784 * ls_val))
+            else:
+                for v in range(3):
+                    index_prob[n][c][v] = (- math.log(index_prob[n][c][v] + ls_val, 0.5)) / (count[c] + (784 * ls_val))
     return index_prob
 
 
@@ -226,16 +235,16 @@ def naive_bayes_prediction(data, c_prob, i_prob, binary):
                 for m in range(c_class):
                     if binary:
                         if d[j][k] == 0:
-                            pred_arr[m] *= i_prob[28 * j + k][m][0]
+                            pred_arr[m] += i_prob[28 * j + k][m][0]
                         elif d[j][k] == 1:
-                            pred_arr[m] *= i_prob[28 * j + k][m][1]
+                            pred_arr[m] += i_prob[28 * j + k][m][1]
                     else:
                         if d[j][k] == 0:
-                            pred_arr[m] *= i_prob[28 * j + k][m][0]
+                            pred_arr[m] += i_prob[28 * j + k][m][0]
                         elif d[j][k] == 1:
-                            pred_arr[m] *= i_prob[28 * j + k][m][1]
+                            pred_arr[m] += i_prob[28 * j + k][m][1]
                         else:
-                            pred_arr[m] *= i_prob[28 * j + k][m][2]
+                            pred_arr[m] += i_prob[28 * j + k][m][2]
         data_pred[i][0] = np.argmax(pred_arr)
     return data_pred
 

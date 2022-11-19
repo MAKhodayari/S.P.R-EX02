@@ -10,8 +10,8 @@ if __name__ == '__main__':
     binary_class_prob = utl.class_probability(binary_train_label)
     ternary_class_prob = utl.class_probability(ternary_train_label)
 
-    binary_index_prob = utl.index_probability(binary_train_data, binary_train_label, True)
-    ternary_index_prob = utl.index_probability(ternary_train_data, ternary_train_label, False)
+    binary_index_prob = utl.index_probability(binary_train_data, binary_train_label, 0.83, True)
+    ternary_index_prob = utl.index_probability(ternary_train_data, ternary_train_label, 0.83, False)
 
     # Test
     binary_data_pred = utl.naive_bayes_prediction(binary_test_data, binary_class_prob, binary_index_prob, True)
@@ -44,5 +44,5 @@ if __name__ == '__main__':
 
     print()
 
-    print('Naive Bayes Accuracy With F[i][j] = {0, 1}: ' + str(round(binary_naive_bayes_acc * 100, 2)))
-    print('Naive Bayes Accuracy With F[i][j] = {0, 1, 2}: ' + str(round(ternary_naive_bayes_acc * 100, 2)))
+    print('Naive Bayes Accuracy With Binary Features: ' + str(round(binary_naive_bayes_acc * 100, 2)))
+    print('Naive Bayes Accuracy With Ternary Features: ' + str(round(ternary_naive_bayes_acc * 100, 2)))
